@@ -5,7 +5,6 @@ Sistem autentikasi berbasis Firebase Cloud dengan implementasi Role-Based Access
 ![Firebase](https://img.shields.io/badge/Firebase-10.14.0-FFCA28?style=flat&logo=firebase)
 ![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=flat&logo=html5&logoColor=white)
 ![JavaScript](https://img.shields.io/badge/JavaScript-ES6+-F7DF1E?style=flat&logo=javascript&logoColor=black)
-![License](https://img.shields.io/badge/License-MIT-blue.svg)
 
 ## 📋 Daftar Isi
 
@@ -20,8 +19,6 @@ Sistem autentikasi berbasis Firebase Cloud dengan implementasi Role-Based Access
 - [Security](#-security)
 - [Testing](#-testing)
 - [Troubleshooting](#-troubleshooting)
-- [Contributing](#-contributing)
-- [License](#-license)
 
 ## ✨ Fitur Utama
 
@@ -496,64 +493,3 @@ https://YOUR_PROJECT_ID.web.app
 Upload semua file ke hosting provider pilihan Anda. Pastikan:
 - Environment variables (jika ada)
 - Redirect rules untuk SPA (jika perlu)
-
-## 📈 Future Enhancements
-
-- [ ] Two-Factor Authentication (2FA)
-- [ ] Email verification after register
-- [ ] Password reset functionality
-- [ ] User profile management
-- [ ] Activity logging & audit trail
-- [ ] Advanced admin analytics
-- [ ] Export user data (CSV/Excel)
-- [ ] Multiple custom roles
-- [ ] Permission-based access control
-- [ ] Dark mode theme
-- [ ] Internationalization (i18n)
-- [ ] Mobile app version (React Native)
-
-## 🤝 Contributing
-
-Contributions are welcome! Untuk contribute:
-
-1. Fork repository ini
-2. Create feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to branch (`git push origin feature/AmazingFeature`)
-5. Open Pull Request
-
-### Development Guidelines
-
-- Follow existing code style
-- Add comments untuk logic yang complex
-- Update README jika ada perubahan fitur
-- Test thoroughly sebelum PR
-
-## 📝 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 👨‍💻 Author
-
-**Your Name**
-- GitHub: [@yourusername](https://github.com/yourusername)
-- Email: your.email@example.com
-
-## 🙏 Acknowledgments
-
-- [Firebase Documentation](https://firebase.google.com/docs)
-- [MDN Web Docs](https://developer.mozilla.org/)
-- Community contributors
-
-## 📞 Support
-
-Jika ada pertanyaan atau issue:
-- Open issue di GitHub
-- Email: your.email@example.com
-- Discord: YourDiscord#1234
-
----
-
-⭐ Jika project ini membantu, berikan star di GitHub!
-
-**Made with ❤️ using Firebase**
