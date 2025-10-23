@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard Admin</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="navbar">
+      <h3>Dashboard Admin</h3>
+      <button id="logoutBtn">Logout</button>
+    </div>
+
+    <div class="content">
+      <h4>Daftar Pengguna</h4>
+      <table class="data-table" id="userTable">
+        <thead>
+          <tr>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
+        <tbody id="userList">
+          <!-- Diisi otomatis lewat JS -->
+          <tr>
+            <td colspan="3" style="text-align: center; padding: 20px; color: #4a5568;">
+              Loading data...
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Popup dinamis -->
+    <div id="popup" class="popup hidden">
+      <div class="popup-content">
+        <p id="popupMessage"></p>
+        <button id="closePopup">OK</button>
+      </div>
+    </div>
+
+    <script src="popup.js"></script>
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
+      import {
+        getAuth,
+        onAuthStateChanged,
+        signOut,
+      } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-auth.js";
+      import {
+        getFirestore,
+        collection,
+        getDocs,
+        updateDoc,
+        doc,
+        getDoc
+      } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCVSqHH2wUz8FK63zIYLN9Se1ARQ-xh378",
+  authDomain: "renald-firebase.firebaseapp.com",
+  projectId: "renald-firebase",
+  storageBucket: "renald-firebase.appspot.com",
+  messagingSenderId: "190771386709",
+  appId: "1:190771386709:web:8a63f1774e180c7a3337dc",
+  measurementId: "G-2L79ZYKXQN"
+};
+
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+      const db = getFirestore(app);
+
+      console.log("🔥 Firebase initialized");
+
+      onAuthStateChanged(auth, async (user) => {
+        console.log("👤 Auth state changed:", user ? user.uid : "No user");
+
+        if (!user) {
+          console.log("❌ No user logged in, redirecting to index.html");
+          window.location.href = "index.html";
+          return;
+        }
+
+        try {
+          const docRef = doc(db, "users", user.uid);
+          const docSnap = await getDoc(docRef);
+
+          console.log("📄 User document exists?", docSnap.exists());
+
+          if (!docSnap.exists()) {
+            console.log("❌ User document not found!");
+            showPopup("Data pengguna tidak ditemukan!");
+            await signOut(auth);
+            setTimeout(() => (window.location.href = "index.html"), 1500);
+            return;
+          }
+
+          const data = docSnap.data();
+          console.log("📊 User data:", data);
+          console.log("🔑 User role:", data.role);
+
+          if (data.role !== "admin") {
+            console.log("⚠️ User is not admin, redirecting...");
+            showPopup("Anda bukan admin!");
+            setTimeout(() => (window.location.href = "homepage.html"), 1500);
+            return;
+          }
+
+          console.log("✅ User is admin, loading users...");
+          await loadUsers();
+        } catch (error) {
+          console.error("❌ Error in auth state change:", error);
+          showPopup("Error: " + error.message);
+        }
+      });
+
+// Ambil semua user dari Firestore
+async function loadUsers() {
+  console.log("📋 loadUsers() called");
+  const userList = document.getElementById("userList");
+
+  try {
+    userList.innerHTML = '<tr><td colspan="3" style="text-align: center; padding: 20px;">Loading...</td></tr>';
+
+    const querySnapshot = await getDocs(collection(db, "users"));
+    console.log("📦 Total documents:", querySnapshot.size);
+
+    if (querySnapshot.empty) {
+      console.log("⚠️ No users found in collection");
+      userList.innerHTML = '<tr><td colspan="3" style="text-align: center; padding: 20px;">Tidak ada pengguna</td></tr>';
+      return;
+    }
+
+    userList.innerHTML = ""; // Clear loading message
+
+    let index = 0;
+    querySnapshot.forEach((docSnap) => {
+      // ❌ Lewati diri sendiri
+      if (docSnap.id === auth.currentUser.uid) return;
+
+      index++;
+      const data = docSnap.data();
+      console.log(`👤 User ${index}:`, {
+        id: docSnap.id,
+        email: data.email,
+        role: data.role
+      });
+
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td>${data.email || 'No email'}</td>
+        <td>
+          <select class="roleSelect" data-id="${docSnap.id}">
+            <option value="user" ${data.role === "user" ? "selected" : ""}>User</option>
+            <option value="admin" ${data.role === "admin" ? "selected" : ""}>Admin</option>
+          </select>
+        </td>
+        <td><button class="saveBtn" data-id="${docSnap.id}">Simpan</button></td>
+      `;
+      userList.appendChild(row);
+    });
+
+    if (userList.children.length === 0) {
+      userList.innerHTML = '<tr><td colspan="3" style="text-align: center; padding: 20px;">Tidak ada pengguna lain</td></tr>';
+    }
+
+    console.log(`✅ Successfully loaded ${index} users`);
+
+    // Event tombol simpan
+    document.querySelectorAll(".saveBtn").forEach((btn) => {
+      btn.addEventListener("click", async (e) => {
+        const id = e.target.getAttribute("data-id");
+        const select = document.querySelector(`.roleSelect[data-id="${id}"]`);
+        const newRole = select.value;
+
+        console.log(`💾 Saving role for user ${id}:`, newRole);
+
+        try {
+          await updateDoc(doc(db, "users", id), { role: newRole });
+          console.log("✅ Role updated successfully");
+          showPopup(`Role pengguna berhasil diubah menjadi "${newRole}"`);
+        } catch (error) {
+          console.error("❌ Error updating role:", error);
+          showPopup("Gagal mengubah role: " + error.message);
+        }
+      });
+    });
+  } catch (error) {
+    console.error("❌ Error loading users:", error);
+    userList.innerHTML = `<tr><td colspan="3" style="text-align: center; padding: 20px; color: red;">Error: ${error.message}</td></tr>`;
+    showPopup("Gagal memuat data pengguna: " + error.message);
+  }
+}
+
+      // Logout
+      document.getElementById("logoutBtn").onclick = async () => {
+        console.log("🚪 Logging out...");
+        try {
+          await signOut(auth);
+          console.log("✅ Logged out successfully");
+          window.location.href = "index.html";
+        } catch (error) {
+          console.error("❌ Logout error:", error);
+          showPopup("Gagal logout: " + error.message);
+        }
+      };
+    </script>
+  </body>
+</html>

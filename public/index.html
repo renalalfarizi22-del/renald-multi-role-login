@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login Aman</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h2>Login Aman</h2>
+
+    <div class="form-box">
+      <input id="email" type="email" placeholder="Email">
+      <input id="password" type="password" placeholder="Password">
+
+      <div class="btn-group">
+        <button id="loginBtn">Login</button>
+        <button id="registerBtn">Daftar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Popup -->
+  <div id="popup" class="popup hidden">
+    <div class="popup-content">
+      <p id="popupMessage"></p>
+      <button id="closePopup">OK</button>
+    </div>
+  </div>
+
+  <script type="module" src="app.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Home Page Pengguna</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="navbar">
+    <h3>Selamat Datang, User</h3>
+    <button id="logoutBtn">Logout</button>
+  </div>
+
+  <div class="content">
+    <section class="welcome">
+      <h2>Hai 👋, Selamat Datang di Aplikasi Aman</h2>
+      <p>Anda berhasil login sebagai <b>pengguna biasa</b>.</p>
+    </section>
+
+    <section class="features">
+      <h4>Fitur yang Tersedia:</h4>
+      <ul>
+        <li>✅ Akses informasi pribadi</li>
+        <li>✅ Ubah profil</li>
+        <li>✅ Lihat data umum</li>
+      </ul>
+    </section>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } 
+      from "https://www.gstatic.com/firebasejs/10.14.0/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCVSqHH2wUz8FK63zIYLN9Se1ARQ-xh378",
+  authDomain: "renald-firebase.firebaseapp.com",
+  projectId: "renald-firebase",
+  storageBucket: "renald-firebase.appspot.com",
+  messagingSenderId: "190771386709",
+  appId: "1:190771386709:web:8a63f1774e180c7a3337dc",
+  measurementId: "G-2L79ZYKXQN"
+};
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    onAuthStateChanged(auth, (user) => {
+      if (!user) window.location.href = "index.html";
+    });
+
+    document.getElementById("logoutBtn").onclick = async () => {
+      await signOut(auth);
+      window.location.href = "index.html";
+    };
+  </script>
+</body>
+</html>
